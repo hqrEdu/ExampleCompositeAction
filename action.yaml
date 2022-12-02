@@ -1,0 +1,27 @@
+name: 'Hello World'
+description: 'Deploy to given env'
+inputs:
+  deploy-name:
+    description: 'Name of deploy'
+    required: true
+    default: 'dev'
+outputs:
+  deployment-url:
+    description: "Deployment url"
+    value: ${{ steps.deployname.outputs.deployment }}
+runs:
+  using: "composite"
+  steps:
+    - run: echo We are going to deploy to '${{ inputs.deploy-name }}'
+      shell: bash
+
+    - run: echo "$(echo $RANDOM)"
+      shell: bash
+
+    - run: echo "deployment=https://${{inputs.deploy-name}}-${RANDOM}.hqr.sh" >>$GITHUB_OUTPUT
+      id: deployname
+      shell: bash
+
+    - run: $GITHUB_ACTION_PATH/deploy.sh ${{ inputs.deploy-name }}
+      shell: bash
+
